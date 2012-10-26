@@ -1,0 +1,8 @@
+<% unless datastreams.empty? %>
+    <table class='multipleEdit' id='datastreams'>
+      <tr>
+        <th colspan="2">Datastreams</th>
+      </tr>
+      <%= render :partial=>'hydra/datastreams/result', :collection=> datastreams%>
+	</table>
+<% end %>

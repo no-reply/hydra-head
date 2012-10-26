@@ -1,0 +1,11 @@
+<tr class="datastream" id ="datastreams_<%= result.dsid %>" >  
+  <td>
+    <%= link_to "#{result.pid}/#{result.dsid}", hydra_asset_datastream_path(result.pid, result.dsid) %>
+  </td>
+  <td>
+	
+   <% if can? :edit, @document %>
+     <%= button_to("Delete", "/hydra/assets/#{result.pid}/datastreams/#{result.dsid}", :data => { :confirm => "Are you sure you want to delete this datastream?" }, :method => :delete, :class => "delete-button") %>
+   <% end %>
+  </td>
+</tr>

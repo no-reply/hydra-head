@@ -10,6 +10,7 @@ module Hydra
   module Controller
     extend ActiveSupport::Autoload
     autoload :FileAssetsBehavior
+    autoload :DatastreamsBehavior
     autoload :AssetsControllerBehavior
   end
 end

@@ -1,0 +1,15 @@
+<form id="document_metadata" action="<%= url_for(:action=>"create", :controller=>"hydra/datastreams")%>"
+ method="post" accept-charset="utf-8" enctype="multipart/form-data">
+<%- field_tag_options = defined?(uploader_options) ? uploader_options : {:id => nil} %>
+<%- select_tag_options = [['Managed','M'],['External','E'],['Redirect','R']] %>
+<div class="uploader-contents">
+  <p>Enter a Datastream ID: </p>
+  <%= text_field_tag 'id', '', :size=>15 %>
+  <p>Browse to upload a file.</p>
+  <%= file_field_tag "Filedata", field_tag_options %>
+  <p>Or enter a URL and content type:</p>
+  <%= text_field_tag 'Urldata', '', :size=>75 %>
+  <%= select 'control_group', nil, select_tag_options, {:include_blank => "Control Group"} %>
+  <p class="save-description"><%= submit_tag 'Create Datastream', {:id => "saveDS"} %></p>
+</div>
+</form>

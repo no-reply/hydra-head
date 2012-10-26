@@ -176,7 +176,8 @@ task :clean do
 end
 
 def all_modules(cmd)
-  FRAMEWORKS.each do |dir|
+  modules = (ENV['MODULE'].empty?)? FRAMEWORKS : [ENV['MODULE']]
+  modules.each do |dir|
     Dir.chdir(dir) do
       puts "\n\e[1;33m[Hydra CI] #{dir}\e[m\n"
       #cmd = "bundle exec rake spec" # doesn't work because it doesn't require the gems specified in the Gemfiles of the test rails apps 
