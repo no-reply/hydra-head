@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe Hydra::ModelMixins::RightsMetadata do
   subject { ModsAsset.new }
+
+  # validate the xml after each test for verification
+  after :each do
+    rights_metadata_schema.validate(subject.rightsMetadata.ng_xml).should == []
+  end
+
   it "should have a set of permissions" do
     subject.discover_groups=['group1', 'group2']
     subject.edit_users=['user1']
