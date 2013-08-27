@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://hydra-collab.stanford.edu/schemas/rightsMetadata/v1" xmlns:v1="http://hydra-collab.stanford.edu/schemas/rightsMetadata/v1">
+  
+  <!-- rightsMedata -->
+  <xs:element name="rightsMetadata">
+    <xs:annotation>
+      <xs:documentation>
+        This is the root of xml document.
+        A version attribute is required, and contains additional copyright, access, use, and embargo nodes.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="v1:copyright"/>
+        <xs:element maxOccurs="unbounded" ref="v1:access"/>
+        <xs:element minOccurs="0" ref="v1:use"/>
+        <xs:element ref="v1:embargo"/>
+      </xs:sequence>
+      <xs:attribute name="version" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <!-- copyright -->
+  <xs:element name="copyright">
+    <xs:annotation>
+      <xs:documentation>
+        This will be blank most of the time, but we need a place to store copyright information when we know it.
+        If something is in the public domain, assert that here, using tools at http://creativecommons.org/choose/publicdomain-2
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="v1:human"/>
+        <xs:element ref="v1:machine"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- access -->
+  <xs:element name="access">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a right of access granted to multiple groups or persons.  The type attribute defines the right, such as
+        edit, read or discover.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="v1:human"/>
+        <xs:element ref="v1:machine"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- embargo -->
+  <xs:element name="embargo">
+    <xs:annotation>
+      <xs:documentation>
+        Embargo metadata is intended to provide a machine-readable date on which an embargo should be revisited; 
+        the date field can be typed locally to provide an indication of what should be done.
+        It is not intended that the machine date necessarily trigger an access rights change without human intervention.
+        Checking and actioning embargo date information will need to be implemented locally according to need.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence minOccurs="0">
+        <xs:element ref="v1:human"/>
+        <xs:element ref="v1:machine"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- use -->
+  <xs:element name="use">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="v1:human"/>
+        <xs:element ref="v1:machine"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- human -->
+  <xs:element name="human">
+    <xs:annotation>
+      <xs:documentation>
+        A string, or otherwise human-readable information.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="type" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- machine -->
+  <xs:element name="machine">
+    <xs:annotation>
+      <xs:documentation>
+        Machine-readable information, such as HTML markup language, and additional group and person nodes
+        that define granted rights.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="v1:a"/>
+        <xs:element ref="v1:br"/>
+        <xs:element ref="v1:group"/>
+        <xs:element ref="v1:person"/>
+        <xs:element ref="v1:policy"/>
+        <xs:element ref="v1:span"/>
+        <xs:element ref="v1:date"/>
+      </xs:choice>
+      <xs:attribute name="type"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="group" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        String defining a group that is granted a particular right defined in access.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="person" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>
+        String defining a individual that is granted a particular right defined in access.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+
+  <xs:element name="policy" type="xs:NMTOKEN"/>
+
+  <!-- date -->
+  <xs:element name="date">
+    <xs:annotation>
+      <xs:documentation>
+        String reprentation of a date, with a type attribute.
+        An example would be the date an item is released from an embargo.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="type" type="xs:NMTOKEN"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- HTML elements -->
+
+  <xs:element name="a">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="v1:img"/>
+      </xs:sequence>
+      <xs:attribute name="href" use="required" type="xs:anyURI"/>
+      <xs:attribute name="rel" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="img">
+    <xs:complexType>
+      <xs:attribute name="alt" use="required"/>
+      <xs:attribute name="src" use="required" type="xs:anyURI"/>
+      <xs:attribute name="style" use="required" type="xs:NMTOKEN"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="br">
+    <xs:complexType/>
+  </xs:element>
+
+  <xs:element name="span">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:NCName">
+          <xs:attribute name="href" use="required" type="xs:anyURI"/>
+          <xs:attribute name="rel" use="required" type="xs:NMTOKEN"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

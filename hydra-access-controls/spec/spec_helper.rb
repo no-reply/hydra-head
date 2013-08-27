@@ -54,3 +54,7 @@ class Devise
     ["uid"]
   end
 end
+
+def rights_metadata_schema
+  Nokogiri::XML::Schema(File.read(File.join(File.dirname(__FILE__), "support/rights_metadata_schema.xsd")))
+end
