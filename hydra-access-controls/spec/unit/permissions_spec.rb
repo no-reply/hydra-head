@@ -83,6 +83,26 @@ describe Hydra::AccessControls::Permissions do
                                       Hydra::AccessControls::Permission.new(:type=>"user", :access=>"edit", :name=>"jcoyne")]
     end
   end
+
+  context "to_solr" do
+    let(:embargo_release_date) { "2010-12-01" }
+    before do
+      subject.rightsMetadata.embargo_release_date = embargo_release_date
+      subject.rightsMetadata.update_permissions("person"=>{"person1"=>"read","person2"=>"discover"}, "group"=>{'group-6' => 'read', "group-7"=>'read', 'group-8'=>'edit'})
+    end
+    it "should produce a solr document" do
+      result = subject.rightsMetadata.to_solr
+      result.size.should == 5
+      ## Wrote the test in this way, because the implementation uses a hash, and the hash order is not deterministic (especially in ruby 1.8.7)
+      result['read_access_group_ssim'].size.should == 2
+      result['read_access_group_ssim'].should include('group-6', 'group-7')
+      result['edit_access_group_ssim'].should == ['group-8']
+      result['discover_access_person_ssim'].should == ['person2']
+      result['read_access_person_ssim'].should == ['person1']
+      result['embargo_release_date_dtsi'].should == subject.rightsMetadata.embargo_release_date(:format => :solr_date)
+    end
+  end
+
   context "with rightsMetadata" do
     before do
       subject.rightsMetadata.update_permissions("person"=>{"person1"=>"read","person2"=>"discover"}, "group"=>{'group-6' => 'read', "group-7"=>'read', 'group-8'=>'edit'})
@@ -96,28 +116,19 @@ describe Hydra::AccessControls::Permissions do
     it "should have read groups writer" do
       subject.read_groups = ['group-2', 'group-3']
       subject.rightsMetadata.groups.should == {'group-2' => 'read', 'group-3'=>'read', 'group-8' => 'edit'}
-      subject.rightsMetadata.individuals.should == {"person1"=>"read","person2"=>"discover"}
+      subject.rightsMetadata.users.should == {"person1"=>"read","person2"=>"discover"}
     end
 
     it "should have read groups string writer" do
       subject.read_groups_string = 'umg/up.dlt.staff, group-3'
       subject.rightsMetadata.groups.should == {'umg/up.dlt.staff' => 'read', 'group-3'=>'read', 'group-8' => 'edit'}
-      subject.rightsMetadata.individuals.should == {"person1"=>"read","person2"=>"discover"}
+      subject.rightsMetadata.users.should == {"person1"=>"read","person2"=>"discover"}
     end
     it "should only revoke eligible groups" do
       subject.set_read_groups(['group-2', 'group-3'], ['group-6'])
       # 'group-7' is not eligible to be revoked
       subject.rightsMetadata.groups.should == {'group-2' => 'read', 'group-3'=>'read', 'group-7' => 'read', 'group-8' => 'edit'}
-      subject.rightsMetadata.individuals.should == {"person1"=>"read","person2"=>"discover"}
-    end
-  end
-  describe "#permissions=" do
-    it "should behave like #permissions_attributes=" do
-      foo1 = Foo.new
-      foo2 = Foo.new
-      foo1.permissions = [{type: "user", access: "edit", name: "editor"}]
-      foo2.permissions_attributes = [{type: "user", access: "edit", name: "editor"}]
-      foo1.permissions.should == foo2.permissions
+      subject.rightsMetadata.users.should == {"person1"=>"read","person2"=>"discover"}
     end
   end
 end
