@@ -7,7 +7,7 @@ describe Hydra::Datastream::RightsMetadata do
     # The way RubyDora loads objects prevents us from stubbing the fedora connection :(
     # ActiveFedora::RubydoraConnection.stubs(:instance).returns(stub_everything())
     obj = ActiveFedora::Base.new
-    @sample = Hydra::Datastream::RightsMetadata.new(obj.inner_object, nil)
+    @sample = Hydra::Datastream::RightsMetadata.new(obj.inner_object, 'rightsMetadata')
     @sample.stub(:content).and_return('')
   end
 
@@ -151,7 +151,7 @@ describe Hydra::Datastream::RightsMetadata do
       solr_doc["discover_access_group_ssim"].should == ["public"]
     end
     it "should solrize fixture content correctly" do
-      lsample = Hydra::Datastream::RightsMetadata.new(nil, nil)
+      lsample = Hydra::Datastream::RightsMetadata.new(nil, 'rightsMetadata')
       lsample.update_permissions({'person' => {'researcher1' => 'edit'},
                                   'group' => {'archivist' => 'edit', 'public' =>'read', 'bob'=>'discover'}})
 
